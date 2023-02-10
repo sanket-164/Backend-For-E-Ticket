@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const fetchuser = require("../middleware/fetchuser");
 
 const con = require("../database");
 
-router.post("/", async (req, res) => {
+router.post("/", fetchuser, async (req, res) => {
   const { pid, uname, name, email, no, dob } = req.body;
 
   try {

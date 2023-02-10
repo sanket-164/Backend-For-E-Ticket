@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
+const fetchuser = require("../middleware/fetchuser");
 
 const con = require("../database");
 
-router.post("/", async (req, res) => {
-  const { pid, limit } = req.body;
+router.post("/", fetchuser, async (req, res) => {
+  const { limit } = req.body;
   let success = true;
 
+  console.log(req.user);
   try {
-    const fetchTicket = `SELECT * FROM ticket where p_id='${pid}' ORDER BY t_date LIMIT ${limit};`;
+    const fetchTicket = `SELECT * FROM ticket where p_id='${req.user.id}' ORDER BY t_date LIMIT ${limit};`;
     con.query(fetchTicket, (err, qres) => {
       if (err) {
         console.log(err.message);

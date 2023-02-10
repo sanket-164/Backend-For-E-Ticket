@@ -16,8 +16,19 @@ router.post(
     body("pwd", "Password must be 8 characters").isLength({ min: 8 }),
   ],
   async (req, res) => {
-    const {id, uname,  pwd, name, email, no, dob, bal} = req.body;
+    const { uname, pwd, name, email, no, dob } = req.body;
     let success = true;
+
+    const d = new Date();
+    const id =
+      "P" +
+      ("0" + d.getFullYear()).slice(3) +
+      ("0" + d.getMonth()).slice(-2) +
+      ("0" + d.getDate()).slice(-2) +
+      ("0" + d.getHours()).slice(-2) +
+      ("0" + d.getMinutes()).slice(-2) +
+      ("0" + d.getSeconds()).slice(-2) +
+      ("0" + d.getMilliseconds()).slice(-2);
 
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
@@ -28,24 +39,21 @@ router.post(
 
     //check whether the user with this email exist already
     try {
-        const findUser = `SELECT id FROM login WHERE uname='${uname}'`;
-        // Checks user with this email exist or not
-        con.query(findUser, (err, res) => {
-          if(err){
-            console.log(err.message);
-          }
-          if(res){
-            console.log(res);
-          }
-        });
-
-        // if (user) {
-        //   success = false;
-        //   return res.status(400).json({
-        //     success,
-        //     error: "A user with this E-mail already exists try new E-mail",
-        //   });
-        // }
+      // const findUser = `SELECT * FROM login WHERE uname='${uname}'`;
+      // // Checks user with this email exist or not
+      // con.query(findUser, (err, res) => {
+      //   if (err) {
+      //     console.log(err.message);
+      //   }
+      //   if (res) {
+      //     console.log(res);
+      //     success = false;
+      //     return res.status(400).json({
+      //       success,
+      //       error: "A user with this E-mail already exists try new E-mail",
+      //     });
+      //   }
+      // });
 
       const salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(pwd, salt);
@@ -57,18 +65,22 @@ router.post(
       con.query(inLogin, (err, res) => {
         if (err) {
           console.log(err.message);
-        }if(res){
+        }
+        if (res) {
           console.log("Inserted in login");
         }
       });
 
-      const inpassenger = `INSERT INTO passenger (p_uname, p_id, p_name, p_email, p_no, p_dob, balance) VALUES ('${uname}','${id}','${name}','${email}',${no?no:null},'${dob}',${0.00})`;
+      const inpassenger = `INSERT INTO passenger (p_uname, p_id, p_name, p_email, p_no, p_dob, balance) VALUES ('${uname}','${id}','${name}','${email}',${
+        no ? no : null
+      },'${dob}',${0.0})`;
       con.query(inpassenger, (err, res) => {
         if (err) {
           console.log(err.message);
           const rollback = "ROLLBACK;";
           con.query(rollback);
-        }if(res){
+        }
+        if (res) {
           console.log("Inserted in passenger");
           const commit = "COMMIT";
           con.query(commit);
@@ -77,7 +89,7 @@ router.post(
 
       //   runQuery(query);
       const data = {
-        id: req.body.id,
+        id: id,
       };
       const authToken = jwt.sign(data, SECRET_MSG);
       res.json({ success, authToken });

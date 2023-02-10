@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
+const fetchuser = require("../middleware/fetchuser");
 
 const con = require("../database");
 
-router.post("/", async (req, res) => {
+router.post("/", fetchuser, async (req, res) => {
   const { tid } = req.body;
   let success = true;
 
