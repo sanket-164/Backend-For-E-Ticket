@@ -1,0 +1,21 @@
+{
+  "name": "e-ticket-backend",
+  "version": "1.0.0",
+  "description": "backend used for e-ticket management system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "express-validator": "^6.14.3",
+    "jsonwebtoken": "^9.0.0",
+    "my-sql": "^1.2.15",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.20"
+  }
+}
